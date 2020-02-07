@@ -67,15 +67,33 @@
       var _totalSupply = promisify(cb => contract.methods.totalSupply().call(cb));
       var totalSupply = new BigNumber(await _totalSupply);
       console.log("totalSupply: " + totalSupply.shift(-18));
+      var _coinbase = promisify(cb => web3.eth.getCoinbase(cb));
+      coinbase = await _coinbase;
+      console.log("coinbase: " + coinbase);
 
+      var _balanceOf = promisify(cb => contract.methods.balanceOf(coinbase).call(cb));
+      var balanceOf = new BigNumber(await _balanceOf);
+      console.log("balanceOf: " + balanceOf.shift(-18));
+
+
+      var transferTo = "0x523c019b968597F4F34D342Af0F8f91935f9543E";
+      var tranferAmount = new BigNumber("0.123").shift(18);
+      contract.methods.transfer(transferTo, tranferAmount).send({ from: coinbase }, function(error, tx) {
+        if (!error) {
+          console.log("tx: " + tx);
+        } else {
+          console.log("error");
+          console.table(error);
+        }
+      });
 
     }
 
     function timeoutCallback() {
       doIt();
-      setTimeout(function() {
-        timeoutCallback();
-      }, 2500);
+      // setTimeout(function() {
+      //   timeoutCallback();
+      // }, 2500);
     }
     timeoutCallback();
   </script>
