@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>Hello</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  </head>
+  <body>
+    <p>hello 123</p>
+  </body>
+  <script>
+    console.log("start");
+
+    var connected = false;
+    async function connectToWeb3() {
+      if (!connected) {
+        if (window.ethereum) {
+          window.web3 = new Web3(ethereum);
+          try {
+            // Request account access if needed
+            await ethereum.enable();
+            // Acccounts now exposed
+            connected = true;
+          } catch (error) {
+            // User denied account access...
+          }
+        } else if (window.web3) {
+          window.web3 = new Web3(web3.currentProvider);
+          // Acccounts always exposed
+          connected = true;
+        } else {
+          console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+        }
+      }
+    }
+
+    async function doIt() {
+      console.log("Ping connected=" + connected);
+      connectToWeb3();
+    }
+
+    function timeoutCallback() {
+      doIt();
+      setTimeout(function() {
+        timeoutCallback();
+      }, 2500);
+    }
+    timeoutCallback();
+  </script>
+</html>
